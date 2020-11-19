@@ -4,7 +4,7 @@ class MoviesControllerTest < ActionDispatch::IntegrationTest
 
   # Pundit
   setup do
-    get '/users/sign_in'
+    get '/users/sign_in' 
     sign_in users(:one)
     post user_session_url
 
