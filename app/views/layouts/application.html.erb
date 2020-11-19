@@ -8,8 +8,14 @@
     <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track': 'reload' %>
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
   </head>
-
   <body>
+    <nav>
+      <% if user_signed_in? -%>
+        <%= link_to  "sign out", destroy_user_session_path, method: :delete, :style=>'float: right;'%>
+      <% else %>
+        <%= link_to  "sign in", new_user_session_path, :style=>'float: right;'%>
+      <% end -%>
+    </nav>
     <%= yield %>
   </body>
 </html>
