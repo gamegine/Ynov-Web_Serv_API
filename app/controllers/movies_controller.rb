@@ -1,31 +1,36 @@
 class MoviesController < ApplicationController
   before_action :set_movie, only: [:show, :edit, :update, :destroy]
-
+  skip_before_action :authenticate_user!, only: [:index, :show]
   # GET /movies
   # GET /movies.json
   def index
+    @movie = policy_scope(Movie)
     @movies = Movie.all
   end
 
   # GET /movies/1
   # GET /movies/1.json
   def show
+    authorize @movie
   end
 
   # GET /movies/new
   def new
     @movie = Movie.new
+    authorize @movie
   end
 
   # GET /movies/1/edit
   def edit
+    authorize @movie
   end
 
   # POST /movies
   # POST /movies.json
   def create
     @movie = Movie.new(movie_params)
-
+    @movie.user = current_user
+    authorize @movie
     respond_to do |format|
       if @movie.save
         format.html { redirect_to @movie, notice: 'Movie was successfully created.' }
@@ -40,6 +45,7 @@ class MoviesController < ApplicationController
   # PATCH/PUT /movies/1
   # PATCH/PUT /movies/1.json
   def update
+    authorize @movie
     respond_to do |format|
       if @movie.update(movie_params)
         format.html { redirect_to @movie, notice: 'Movie was successfully updated.' }
@@ -55,6 +61,7 @@ class MoviesController < ApplicationController
   # DELETE /movies/1.json
   def destroy
     @movie.destroy
+    authorize @movie
     respond_to do |format|
       format.html { redirect_to movies_url, notice: 'Movie was successfully destroyed.' }
       format.json { head :no_content }

@@ -1,7 +1,16 @@
 require 'test_helper'
 
 class MoviesControllerTest < ActionDispatch::IntegrationTest
+
+  # Pundit
   setup do
+    get '/users/sign_in'
+    sign_in users(:one)
+    post user_session_url
+
+    # If you want to test that things are working correctly, uncomment this below:
+    follow_redirect!
+    assert_response :success
     @movie = movies(:one)
   end
 
