@@ -81,6 +81,8 @@ GEM
       railties (>= 4.1.0)
       responders
       warden (~> 1.2.3)
+    doorkeeper (5.4.0)
+      railties (>= 5)
     erubi (1.9.0)
     faker (2.14.0)
       i18n (>= 1.6, < 2)
@@ -209,6 +211,7 @@ DEPENDENCIES
   byebug
   capybara (>= 2.15)
   devise
+  doorkeeper (~> 5.4.0)
   faker
   jbuilder (~> 2.7)
   pg (>= 0.18, < 2.0)
