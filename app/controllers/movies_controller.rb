@@ -68,6 +68,35 @@ class MoviesController < ApplicationController
     end
   end
 
+  def searchTitle
+    title = params[:title]
+    if title=="" || title==nil then
+      return render json: {message: "put a title"}
+    end
+    titles = title.split(",").map(&:downcase).map{|string|"%"+string+"%"}
+    if titles!=[]
+      @movie = Movie.all.where("lower(title) ILIKE ANY (array[:title])", title: titles) 
+      authorize @movie
+      return render json: {data: @movie}
+    else
+      return render json: {message: "movies not found"}
+    end
+  end
+
+  def searchDate
+    dates = params[:date].split(",").uniq
+    raise
+    movie = []
+    dates.each do |d|
+      date = Date.parse(d)
+      query = Movie.where(:created_at => date.beginning_of_day..date.end_of_day)
+      authorize query
+      movie+=query
+    end
+    @movie = movie
+    return render json: {data: @movie}
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_movie
