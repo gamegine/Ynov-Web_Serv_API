@@ -85,7 +85,6 @@ class MoviesController < ApplicationController
 
   def searchDate
     dates = params[:date].split(",").uniq
-    raise
     movie = []
     dates.each do |d|
       date = Date.parse(d)
