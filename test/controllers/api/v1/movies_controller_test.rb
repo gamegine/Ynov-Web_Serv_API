@@ -1,56 +1,48 @@
 require 'test_helper'
 
-class MoviesControllerTest < ActionDispatch::IntegrationTest
-
-  # Pundit
+class Api::V1::MoviesControllerTest < ActionDispatch::IntegrationTest
   setup do
+    ######################### no token!
     get '/users/sign_in' 
     sign_in users(:one)
     post user_session_url
-
     # If you want to test that things are working correctly, uncomment this below:
     follow_redirect!
     assert_response :success
+    #########################
+
     @movie = movies(:one)
   end
+
 
   test "should get index" do
     expected = Movie.all.map { |e| movie_to_json e }
 
-    get movies_url('json')
+    get api_v1_movies_url('json')
     assert_response :success
     # json_response = JSON.parse(response.body)
     json_response = ActiveSupport::JSON.decode @response.body
     assert_equal json_response, expected
   end
 
-  test "should get new" do
-    get new_movie_url
-    assert_response :success
-  end
-
   test "should create movie" do
     assert_difference('Movie.count', 1) do
-      post movies_url, params: { movie: { title: "@movie.title" } }
+      post api_v1_movies_url, params: { movie: { title: "@movie.title" } }
     end
-
-    assert_redirected_to movie_url(Movie.last)
     assert_equal Movie.last.title, "@movie.title"
+
+    json_response = ActiveSupport::JSON.decode @response.body
+    expected = movie_to_json Movie.last
+    assert_equal expected, json_response
   end
 
   test "should show movie" do
     expected = movie_to_json @movie
 
-    get movie_url({:id=>@movie.id, format: :json})
+    get api_v1_movie_url({:id=>@movie.id})
     assert_response :success
-    # json_response = JSON.parse(response.body)
     json_response = ActiveSupport::JSON.decode @response.body
     assert_equal json_response, expected
-  end
-
-  test "should get edit" do
-    get edit_movie_url(@movie)
-    assert_response :success
   end
 
   test "should update movie" do
@@ -60,10 +52,11 @@ class MoviesControllerTest < ActionDispatch::IntegrationTest
     })
 
     assert_changes "Movie.last.title", from: "Movie Title", to: "test" do
-      patch movie_url(movie), params: { movie: { title: "test" } }
+      patch api_v1_movie_url(movie), params: { movie: { title: "test" } }
     end
-
-    assert_redirected_to movie_url(movie)
+    json_response = ActiveSupport::JSON.decode @response.body
+    expected = movie_to_json Movie.last
+    assert_equal expected, json_response
   end
 
   test "should destroy movie" do
@@ -72,14 +65,11 @@ class MoviesControllerTest < ActionDispatch::IntegrationTest
         user: users(:one)
     })
     assert_difference('Movie.count', -1) do
-      delete movie_url(movie)
+      delete api_v1_movie_url(movie)
     end
-
-    assert_redirected_to movies_url
   end
 
   private
-
     # Movie.all.as_json(except: [:user_id])
     #       .each { |e| e['url'] = movie_url({:id=>e['id'], format: :json}) }
     #       .each { |e| e['url'] = "http://www.example.com/movies/#{e['id']}.json" }

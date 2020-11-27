@@ -2,8 +2,15 @@
 
 one:
   user_id: 1
-  title: MyString
+  title: test
+  created_at: <%= Date.parse("2020-11-15T07:39:59Z") %>
 
 two:
   user_id: 2
-  title: MyString
+  title: coucou
+  created_at: <%= Date.parse("2020-11-20T07:39:59Z") %>
+
+three:
+  user_id: 1
+  title: hello
+  created_at: <%= Date.parse("2020-11-19T07:39:59Z") %>
