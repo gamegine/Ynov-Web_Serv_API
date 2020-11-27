@@ -15,13 +15,13 @@ class MoviesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get index" do
-    EXPECTED = Movie.all.map { |e| movie_to_json e }
+    expected = Movie.all.map { |e| movie_to_json e }
 
     get movies_url('json')
     assert_response :success
     # json_response = JSON.parse(response.body)
     json_response = ActiveSupport::JSON.decode @response.body
-    assert_equal json_response, EXPECTED
+    assert_equal json_response, expected
   end
 
   test "should get new" do
@@ -39,13 +39,13 @@ class MoviesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should show movie" do
-    EXPECTED = movie_to_json @movie
+    expected = movie_to_json @movie
 
     get movie_url({:id=>@movie.id, format: :json})
     assert_response :success
     # json_response = JSON.parse(response.body)
     json_response = ActiveSupport::JSON.decode @response.body
-    assert_equal json_response, EXPECTED
+    assert_equal json_response, expected
   end
 
   test "should get edit" do
