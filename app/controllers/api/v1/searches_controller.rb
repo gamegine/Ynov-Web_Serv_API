@@ -1,5 +1,7 @@
 class Api::V1::SearchesController < Api::V1::BaseController
 
+  skip_before_action :doorkeeper_authorize!
+
   def searchTitle
     authorize Movie
     title = params[:title]

@@ -1,11 +1,11 @@
 class Api::V1::MoviesController < Api::V1::BaseController
   before_action :set_movie, only: [:show, :update, :destroy]
-  skip_before_action :authenticate_user!, only: [:index, :show]
+  #skip_before_action :authenticate_user!, only: [:index, :show]
+  skip_before_action :doorkeeper_authorize!, only: [:index ,:show]
 
   # GET /movies
   def index
-    @movie = policy_scope(Movie)
-    @movies = Movie.all
+    @movies = policy_scope(Movie)
   end
 
   # GET /movies/1
@@ -16,7 +16,7 @@ class Api::V1::MoviesController < Api::V1::BaseController
   # POST /movies
   def create
     @movie = Movie.new(movie_params)
-    @movie.user = current_user
+    @movie.user = current_resource_owner
     authorize @movie
     if @movie.save
       render :show, status: :created, location: @movie
@@ -51,5 +51,9 @@ class Api::V1::MoviesController < Api::V1::BaseController
     # Only allow a list of trusted parameters through.
     def movie_params
       params.require(:movie).permit(:title)
+    end
+
+    def current_resource_owner
+      User.find(doorkeeper_token.resource_owner_id) if doorkeeper_token
     end
 end
