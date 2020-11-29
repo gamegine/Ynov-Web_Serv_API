@@ -1,9 +1,27 @@
 class Api::V1::MoviesController < Api::V1::BaseController
+  include Swagger::Blocks
   before_action :set_movie, only: [:show, :update, :destroy]
   #skip_before_action :authenticate_user!, only: [:index, :show]
   skip_before_action :doorkeeper_authorize!, only: [:index ,:show]
 
   # GET /movies
+  swagger_path '/movies' do
+    operation :get do
+      key :summary, 'get movies'
+      key :tags, [
+        'movies'
+      ]
+      response 200 do
+        key :description, 'get Movie.all'
+        schema do
+          key :type, :array
+          items do
+            key :'$ref', :Movie
+          end
+        end
+      end
+    end
+  end
   def index
     @movies = policy_scope(Movie)
   end
