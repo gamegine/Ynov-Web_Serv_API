@@ -28,4 +28,12 @@ class MoviePolicy < ApplicationPolicy
     def destroy?
       update?
     end
+
+    def searchTitle?
+      true
+    end
+
+    def searchDate?
+      true
+    end
 end
