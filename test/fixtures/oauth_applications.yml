@@ -1,0 +1,10 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  id: 1
+  name: "Doorkeeper Sinatra Client"
+  redirect_uri: "https://localhost/callback"
+  uid: "U1eLNh4pqsbBnD9wcoLN3YYWFU6tPQ3Ypy8RBTcAmZ0"
+  secret: "lO29_1ABixdaxwbeMzchDLBC5cYpJknrIhrNApqIwG0"
+  created_at: <%= Date.parse("2020-11-15T07:39:59Z") %>
+  updated_at: <%= Date.parse("2020-11-15T07:39:59Z") %>

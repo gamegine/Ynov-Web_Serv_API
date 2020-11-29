@@ -2,15 +2,8 @@ require 'test_helper'
 
 class Api::V1::MoviesControllerTest < ActionDispatch::IntegrationTest
   setup do
-    ######################### no token!
-    get '/users/sign_in' 
-    sign_in users(:one)
-    post user_session_url
-    # If you want to test that things are working correctly, uncomment this below:
-    follow_redirect!
-    assert_response :success
-    #########################
-
+    # @token = oauth_access_tokens(:one) # fail
+    @token = Doorkeeper::AccessToken.last
     @movie = movies(:one)
   end
 
@@ -27,7 +20,8 @@ class Api::V1::MoviesControllerTest < ActionDispatch::IntegrationTest
 
   test "should create movie" do
     assert_difference('Movie.count', 1) do
-      post api_v1_movies_url, params: { movie: { title: "@movie.title" } }
+      post api_v1_movies_url :access_token => @token.token, params: { movie: { title: "@movie.title" } }
+      assert_response :success
     end
     assert_equal Movie.last.title, "@movie.title"
 
@@ -52,7 +46,8 @@ class Api::V1::MoviesControllerTest < ActionDispatch::IntegrationTest
     })
 
     assert_changes "Movie.last.title", from: "Movie Title", to: "test" do
-      patch api_v1_movie_url(movie), params: { movie: { title: "test" } }
+      patch api_v1_movie_url({:id=>movie.id, :access_token => @token.token}), params: { movie: { title: "test" } }
+      assert_response :success
     end
     json_response = ActiveSupport::JSON.decode @response.body
     expected = movie_to_json Movie.last
@@ -65,7 +60,8 @@ class Api::V1::MoviesControllerTest < ActionDispatch::IntegrationTest
         user: users(:one)
     })
     assert_difference('Movie.count', -1) do
-      delete api_v1_movie_url(movie)
+      delete api_v1_movie_url({:id=>movie.id, :access_token => @token.token})
+      assert_response :success
     end
   end
 
