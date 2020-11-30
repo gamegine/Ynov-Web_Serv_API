@@ -5,7 +5,8 @@ class Api::V1::MoviesController < Api::V1::BaseController
 
   # GET /movies
   def index
-    @movies = policy_scope(Movie)
+    @movies = policy_scope(Movie).page(page).per(per_page)
+    set_pagination_headers(@movies)
   end
 
   # GET /movies/1
