@@ -31,11 +31,11 @@ class Api::V1::SearchesController < Api::V1::BaseController
       dates.each do |d|
         date = Date.parse(d)
         query = Movie.where(:created_at => date.beginning_of_day..date.end_of_day).page(page).per(per_page)
-        set_pagination_headers(query)
         authorize query
         movie+=query
       end
       @movies = movie
+      set_pagination_headers(@movies)
       # return render json: {data: @movie.as_json(except: [:user_id])}
     end
   end
