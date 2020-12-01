@@ -4,28 +4,16 @@ class Api::V1::WatchesController < Api::V1::BaseController
   skip_before_action :doorkeeper_authorize!, only: [:index ,:show]
 
   # GET /watches
-  # GET /watches.json
   def index
     @watches = policy_scope(Watch)
   end
 
   # GET /watches/1
-  # GET /watches/1.json
   def show
     authorize @watch
   end
 
-  # GET /watches/new
-  def new
-    @watch = Watch.new
-  end
-
-  # GET /watches/1/edit
-  def edit
-  end
-
   # POST /watches
-  # POST /watches.json
   def create
     @watch = Watch.new(watch_params)
     authorize @watch
@@ -38,7 +26,6 @@ class Api::V1::WatchesController < Api::V1::BaseController
   end
 
   # PATCH/PUT /watches/1
-  # PATCH/PUT /watches/1.json
   def update
     authorize @watch
     if @watch.update(watch_params)
@@ -49,7 +36,6 @@ class Api::V1::WatchesController < Api::V1::BaseController
   end
 
   # DELETE /watches/1
-  # DELETE /watches/1.json
   def destroy
     @watch.destroy
     authorize @watch
