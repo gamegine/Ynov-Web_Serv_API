@@ -1,4 +1,148 @@
 class Api::V1::SearchesController < Api::V1::BaseController
+  include Swagger::Blocks
+
+
+  swagger_path '/search/title={titles}' do
+    operation :get do
+      key :summary, 'Find movie by titles'
+      key :produces, [
+        'application/json',
+        'text/html',
+      ]
+      key :tags, [
+        'movie'
+      ]
+      parameter do
+        key :name, :title
+        key :in, :path
+        key :required, true
+        key :type, :string
+      end
+      response 200 do
+        key :description, 'get Movies'
+        schema do
+          key :type, :array
+          items do
+            key :'$ref', :Movie
+          end
+        end
+      end
+    end
+  end
+
+  swagger_path '/search/date={dates}' do
+    operation :get do
+      key :summary, 'Find movie by dates'
+      key :produces, [
+        'application/json',
+        'text/html',
+      ]
+      key :tags, [
+        'movie'
+      ]
+      parameter do
+        key :name, :date
+        key :in, :path
+        key :required, true
+        key :type, :string
+        key :format, :date
+      end
+      response 200 do
+        key :description, 'get Movies'
+        schema do
+          key :type, :array
+          items do
+            key :'$ref', :Movie
+          end
+        end
+      end
+    end
+  end
+
+  swagger_path '/search/date=[date1,date2]' do
+    operation :get do
+      key :summary, 'Find movie by dates between date1 and date2 inclusive'
+      key :produces, [
+        'application/json',
+        'text/html',
+      ]
+      key :tags, [
+        'movie'
+      ]
+      parameter do
+        key :name, :date
+        key :in, :path
+        key :required, true
+        key :type, :array
+      end
+      response 200 do
+        key :description, 'get Movies'
+        schema do
+          key :type, :array
+          items do
+            key :'$ref', :Movie
+          end
+        end
+      end
+    end
+  end
+
+  swagger_path '/search/date=[date1,]' do
+    operation :get do
+      key :summary, 'Find movie where dates are superiors to date1 inclusive'
+      key :produces, [
+        'application/json',
+        'text/html',
+      ]
+      key :tags, [
+        'movie'
+      ]
+      parameter do
+        key :name, :date
+        key :in, :path
+        key :required, true
+        key :type, :array
+      end
+      response 200 do
+        key :description, 'get Movies'
+        schema do
+          key :type, :array
+          items do
+            key :'$ref', :Movie
+          end
+        end
+      end
+    end
+  end
+
+  swagger_path '/search/date=[,date1]' do
+    operation :get do
+      key :summary, 'Find movie where dates are inferiors to date1 inclusive'
+      key :produces, [
+        'application/json',
+        'text/html',
+      ]
+      key :tags, [
+        'movie'
+      ]
+      parameter do
+        key :name, :date
+        key :in, :path
+        key :required, true
+        key :type, :array
+      end
+      response 200 do
+        key :description, 'get Movies'
+        schema do
+          key :type, :array
+          items do
+            key :'$ref', :Movie
+          end
+        end
+      end
+    end
+  end
+
 
   skip_before_action :doorkeeper_authorize!
 
