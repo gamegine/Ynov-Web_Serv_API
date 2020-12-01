@@ -5,8 +5,8 @@ class ApidocsController < ActionController::Base
         key :swagger, '2.0'
         info do
             key :version, '1.0.0'
-            key :title, 'Swagger Sample App'
-            key :description, 'This is a sample description.'
+            key :title, 'Swagger API-YNOV'
+            key :description, 'Find more info in github : https://github.com/gamegine/Ynov-Web_Serv_API'
             key :termsOfService, 'http://helloreverb.com/terms/'
             contact do
                 key :name, 'apiteam@wordnik.com'
@@ -16,7 +16,7 @@ class ApidocsController < ActionController::Base
             end
         end
         tag do
-            key :name, 'Sample App'
+            key :name, 'Project API-YNOV'
             key :description, 'Sample API operations'
             externalDocs do
                 key :description, 'Find more info here'
