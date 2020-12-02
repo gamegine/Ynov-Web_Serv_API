@@ -1,0 +1,17 @@
+<h1>Token</h1>
+
+<br>
+<%= link_to 'oauth authorization', oauth_authorization_url({
+      client_id: @client.uid,
+      redirect_uri: @client.redirect_uri, # http://localhost:3000
+      response_type: "code",
+      scope: "default_scope",
+      }) %>
+<br>
+<%= link_to 'Requesting the access token', oauth_token_url( {
+      client_id: @client.uid,
+      client_secret: @client.secret,
+      grant_type:"authorization_code",
+      redirect_uri: @client.redirect_uri,
+      code: params[:code] || "---null---"
+      }),method: "post" if params[:code] %>
