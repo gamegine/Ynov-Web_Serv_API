@@ -21,4 +21,12 @@ class WatchPolicy < ApplicationPolicy
     update?
   end
 
+  def searchRatingRange?
+    true
+  end
+
+  def searchRating?
+    true
+  end
+
 end

@@ -63,4 +63,35 @@ class Api::V1::SearchesController < Api::V1::BaseController
       authorize @movies
       # return render json: {data: @movie.as_json(except: [:user_id])}
   end  
+
+  def searchRating
+    authorize Watch
+    if params[:rating].include? "["
+      searchRatingRange
+    else
+      rating = params[:rating].split(",").uniq
+      if rating=="" || rating==nil then
+        return render json: {message: "put a rating"}
+      end
+      @watches = Watch.where(rating: rating) 
+    end
+  end
+
+  def searchRatingRange
+    rating = params[:rating].tr('[]', '').split(',')
+    
+    if params[:rating] !~ /^\[\d*\,\d*\]$/ ||
+      (rating[0] == nil || rating[0] == "" && rating[1] == nil || rating[1] == "")    
+      return render json: {message: "invalid argument"}
+    end
+
+    if rating[0] != "" && rating[1] != ""
+      @watches = Watch.where(rating: (rating[0])..(rating[1]))
+    elsif rating[0] == ""
+      @watches = Watch.where('rating <= ?', rating[1])
+    elsif rating[1] == ""
+      @watches = Watch.where('rating >= ?', rating[0])
+    end
+  end
+
 end
