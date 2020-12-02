@@ -11,6 +11,9 @@ Doorkeeper.configure do
     # Put your resource owner authentication logic here.
     # Example implementation:
     #   User.find_by(id: session[:user_id]) || redirect_to(new_user_session_url)
+
+    # store_location_for go back aftet devise login
+    store_location_for("doorkeeper-oauth-authorize", request.original_fullpath)
     current_user || redirect_to(new_user_session_url)
   end
 

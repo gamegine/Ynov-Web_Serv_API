@@ -15,5 +15,6 @@ Rails.application.routes.draw do
   # swagger
   get '/api-docs.json' => 'apidocs#index'
   get '/swagger' => redirect('/swagger-ui/index.html?url=/api-docs.json')
+  get    'token'      => 'token#index'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end
