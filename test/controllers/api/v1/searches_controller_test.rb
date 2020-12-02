@@ -1,16 +1,6 @@
 require 'test_helper'
 
 class Api::V1::SearchesControllerTest < ActionDispatch::IntegrationTest
-  # Pundit
-  setup do
-    get '/users/sign_in' 
-    sign_in users(:one)
-    post user_session_url
-
-    # If you want to test that things are working correctly, uncomment this below:
-    follow_redirect!
-    assert_response :success
-  end
 
   test "should search title" do
     expected = [movies(:one)].map { |e| movie_to_json e }
@@ -40,19 +30,28 @@ class Api::V1::SearchesControllerTest < ActionDispatch::IntegrationTest
     assert_equal expected,json_response
   end
 
-  test "should search titles not found" do
-    expected = {"message"=>"movies not found"}
+  # test "should search titles not found" do
+  #   expected = {"message"=>"movies not found"}
     
-    get api_v1_search_title_url, params: {title: "ererrerrrererer"}
-    assert_response :success
-    json_response = ActiveSupport::JSON.decode @response.body
-    assert_equal expected,json_response
-  end
+  #   get api_v1_search_title_url, params: {title: "ererrerrrererer"}
+  #   assert_response :success
+  #   json_response = ActiveSupport::JSON.decode @response.body
+  #   assert_equal expected,json_response
+  # end
 
   test "should search date" do
     expected = [movies(:one)].map { |e| movie_to_json e }
     
     get api_v1_search_date_url, params: {date: "2020-11-15"}
+    assert_response :success
+    json_response = ActiveSupport::JSON.decode @response.body
+    assert_equal json_response, expected
+  end
+
+  test "should search few dates" do
+    expected = [movies(:one),movies(:two)].map { |e| movie_to_json e }
+    
+    get api_v1_search_date_url, params: {date: "2020-11-15,2020-11-20"}
     assert_response :success
     json_response = ActiveSupport::JSON.decode @response.body
     assert_equal json_response, expected

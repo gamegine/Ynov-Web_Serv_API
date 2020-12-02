@@ -18,6 +18,16 @@ class Api::V1::MoviesControllerTest < ActionDispatch::IntegrationTest
     assert_equal json_response, expected
   end
 
+  test "should get index with pagination" do
+    expected = [movies(:one),movies(:two)].map { |e| movie_to_json e }
+
+    get api_v1_movies_url, params: {page: 1,per_page:2}
+    assert_response :success
+    # json_response = JSON.parse(response.body)
+    json_response = ActiveSupport::JSON.decode @response.body
+    assert_equal json_response, expected
+  end
+
   test "should create movie" do
     assert_difference('Movie.count', 1) do
       post api_v1_movies_url :access_token => @token.token, params: { movie: { title: "@movie.title" } }
