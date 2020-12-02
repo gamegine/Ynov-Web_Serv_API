@@ -81,6 +81,8 @@ GEM
       railties (>= 4.1.0)
       responders
       warden (~> 1.2.3)
+    doorkeeper (5.4.0)
+      railties (>= 5)
     erubi (1.9.0)
     faker (2.14.0)
       i18n (>= 1.6, < 2)
@@ -91,6 +93,18 @@ GEM
       concurrent-ruby (~> 1.0)
     jbuilder (2.10.1)
       activesupport (>= 5.0.0)
+    kaminari (1.2.1)
+      activesupport (>= 4.1.0)
+      kaminari-actionview (= 1.2.1)
+      kaminari-activerecord (= 1.2.1)
+      kaminari-core (= 1.2.1)
+    kaminari-actionview (1.2.1)
+      actionview
+      kaminari-core (= 1.2.1)
+    kaminari-activerecord (1.2.1)
+      activerecord
+      kaminari-core (= 1.2.1)
+    kaminari-core (1.2.1)
     loofah (2.7.0)
       crass (~> 1.0.2)
       nokogiri (>= 1.5.9)
@@ -171,6 +185,7 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
+    swagger-blocks (2.0.2)
     thor (1.0.1)
     thread_safe (0.3.6)
     tilt (2.0.10)
@@ -209,14 +224,17 @@ DEPENDENCIES
   byebug
   capybara (>= 2.15)
   devise
+  doorkeeper (~> 5.4.0)
   faker
   jbuilder (~> 2.7)
+  kaminari
   pg (>= 0.18, < 2.0)
   puma (~> 4.1)
   pundit
   rails (~> 6.0.3, >= 6.0.3.4)
   sass-rails (>= 6)
   selenium-webdriver
+  swagger-blocks (~> 2.0.2)
   turbolinks (~> 5)
   tzinfo-data
   web-console (>= 3.3.0)

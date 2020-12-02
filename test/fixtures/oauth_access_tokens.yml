@@ -1,0 +1,8 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  id: 1
+  application_id: 1
+  resource_owner_id: 1
+  token: "2YbFKHqWU0dwXReniFgXPBzCotippxFrnygfuqB2Hrc"
+  created_at: <%= Date.parse("2020-11-15T07:39:59Z") %>

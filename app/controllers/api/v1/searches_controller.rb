@@ -1,4 +1,150 @@
 class Api::V1::SearchesController < Api::V1::BaseController
+  include Swagger::Blocks
+
+
+  swagger_path '/search/title={titles}' do
+    operation :get do
+      key :summary, 'Find movie by titles'
+      key :produces, [
+        'application/json',
+        'text/html',
+      ]
+      key :tags, [
+        'movie'
+      ]
+      parameter do
+        key :name, :title
+        key :in, :path
+        key :required, true
+        key :type, :string
+      end
+      response 200 do
+        key :description, 'get Movies'
+        schema do
+          key :type, :array
+          items do
+            key :'$ref', :Movie
+          end
+        end
+      end
+    end
+  end
+
+  swagger_path '/search/date={dates}' do
+    operation :get do
+      key :summary, 'Find movie by dates'
+      key :produces, [
+        'application/json',
+        'text/html',
+      ]
+      key :tags, [
+        'movie'
+      ]
+      parameter do
+        key :name, :date
+        key :in, :path
+        key :required, true
+        key :type, :string
+        key :format, :date
+      end
+      response 200 do
+        key :description, 'get Movies'
+        schema do
+          key :type, :array
+          items do
+            key :'$ref', :Movie
+          end
+        end
+      end
+    end
+  end
+
+  swagger_path '/search/date=[date1,date2]' do
+    operation :get do
+      key :summary, 'Find movie by dates between date1 and date2 inclusive'
+      key :produces, [
+        'application/json',
+        'text/html',
+      ]
+      key :tags, [
+        'movie'
+      ]
+      parameter do
+        key :name, :date
+        key :in, :path
+        key :required, true
+        key :type, :array
+      end
+      response 200 do
+        key :description, 'get Movies'
+        schema do
+          key :type, :array
+          items do
+            key :'$ref', :Movie
+          end
+        end
+      end
+    end
+  end
+
+  swagger_path '/search/date=[date1,]' do
+    operation :get do
+      key :summary, 'Find movie where dates are superiors to date1 inclusive'
+      key :produces, [
+        'application/json',
+        'text/html',
+      ]
+      key :tags, [
+        'movie'
+      ]
+      parameter do
+        key :name, :date
+        key :in, :path
+        key :required, true
+        key :type, :array
+      end
+      response 200 do
+        key :description, 'get Movies'
+        schema do
+          key :type, :array
+          items do
+            key :'$ref', :Movie
+          end
+        end
+      end
+    end
+  end
+
+  swagger_path '/search/date=[,date1]' do
+    operation :get do
+      key :summary, 'Find movie where dates are inferiors to date1 inclusive'
+      key :produces, [
+        'application/json',
+        'text/html',
+      ]
+      key :tags, [
+        'movie'
+      ]
+      parameter do
+        key :name, :date
+        key :in, :path
+        key :required, true
+        key :type, :array
+      end
+      response 200 do
+        key :description, 'get Movies'
+        schema do
+          key :type, :array
+          items do
+            key :'$ref', :Movie
+          end
+        end
+      end
+    end
+  end
+
+
+  skip_before_action :doorkeeper_authorize!
 
   def searchTitle
     authorize Movie
@@ -8,13 +154,13 @@ class Api::V1::SearchesController < Api::V1::BaseController
         return render json: {message: "put a title"}
     end
     titles = title.split(",").map(&:downcase).map{|string|"%"+string+"%"}
-    @movies = Movie.all.where("lower(title) ILIKE ANY (array[:title])", title: titles) 
-    test = @movies.length
-    if @movies.length==0 || @movies.length==nil
-      return render json: {message: "movies not found"}
-    else
-      authorize @movies
-    end
+    @movies = Movie.all.where("lower(title) ILIKE ANY (array[:title])", title: titles).page(page).per(per_page) 
+    set_pagination_headers(@movies)
+    # if @movies.length==0 || @movies.length==nil
+    #   return render json: {message: "movies not found"}
+    # else
+    authorize @movies
+    # end
   end
 
   def searchDate
@@ -32,7 +178,8 @@ class Api::V1::SearchesController < Api::V1::BaseController
         authorize query
         movie+=query
       end
-      @movies = movie
+      @movies = Kaminari.paginate_array(movie).page(page).per(per_page)
+      set_pagination_headers(@movies)
       # return render json: {data: @movie.as_json(except: [:user_id])}
     end
   end
@@ -52,13 +199,47 @@ class Api::V1::SearchesController < Api::V1::BaseController
           if dates[1] < dates[0]
               return render json: {message: "second date inferior than first"}
           end
-          @movies = Movie.where({created_at: dates[0].beginning_of_day..dates[1].end_of_day})
+          @movies = Movie.where({created_at: dates[0].beginning_of_day..dates[1].end_of_day}).page(page).per(per_page)
+          set_pagination_headers(@movies)
       elsif dates[0] == ""
-          @movies = Movie.where('created_at <= ?', dates[1].end_of_day)
+          @movies = Movie.where('created_at <= ?', dates[1].end_of_day).page(page).per(per_page)
+          set_pagination_headers(@movies)
       elsif dates[1] == ""
-          @movies = Movie.where('created_at >= ?', dates[0].beginning_of_day)
+          @movies = Movie.where('created_at >= ?', dates[0].beginning_of_day).page(page).per(per_page)
+          set_pagination_headers(@movies)
       end
       authorize @movies
       # return render json: {data: @movie.as_json(except: [:user_id])}
   end  
+
+  def searchRating
+    authorize Watch
+    if params[:rating].include? "["
+      searchRatingRange
+    else
+      rating = params[:rating].split(",").uniq
+      if rating=="" || rating==nil then
+        return render json: {message: "put a rating"}
+      end
+      @watches = Watch.where(rating: rating) 
+    end
+  end
+
+  def searchRatingRange
+    rating = params[:rating].tr('[]', '').split(',')
+    
+    if params[:rating] !~ /^\[\d*\,\d*\]$/ ||
+      (rating[0] == nil || rating[0] == "" && rating[1] == nil || rating[1] == "")    
+      return render json: {message: "invalid argument"}
+    end
+
+    if rating[0] != "" && rating[1] != ""
+      @watches = Watch.where(rating: (rating[0])..(rating[1]))
+    elsif rating[0] == ""
+      @watches = Watch.where('rating <= ?', rating[1])
+    elsif rating[1] == ""
+      @watches = Watch.where('rating >= ?', rating[0])
+    end
+  end
+
 end
