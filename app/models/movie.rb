@@ -19,4 +19,5 @@ class Movie < ApplicationRecord
         end
     end
     belongs_to :user
+    has_many :watchs, dependent: :destroy
 end

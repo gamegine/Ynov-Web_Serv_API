@@ -6,8 +6,10 @@ Rails.application.routes.draw do
   namespace :api, defaults: { format: :json } do
     namespace :v1 do
       resources :movies
+      resources :watches
       get    'search/title'      => 'searches#searchTitle'
       get    'search/date'        => 'searches#searchDate'
+      get    'search/rating'        => 'searches#searchRating'
     end
   end
   # swagger

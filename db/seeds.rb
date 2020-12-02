@@ -9,6 +9,7 @@ require 'faker'
 
 puts "destroy all"
 
+Watch.destroy_all
 Movie.destroy_all
 User.destroy_all
 
@@ -17,11 +18,17 @@ puts "create user"
 userelm = User.create(email: "test@test.com",password:'123456')
 
 
-puts "create movies"
+puts "create movies and watches"
 
 5.times do 
-    Movie.create({
+    movieelm = Movie.create({
         title: Faker::Name.name,
         user: userelm,
+    })
+    Watch.create({
+        user: userelm,
+        movie: movieelm, 
+        rating: 10, 
+        comment: "test"
     })
 end
