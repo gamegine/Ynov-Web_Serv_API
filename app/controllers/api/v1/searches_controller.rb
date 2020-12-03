@@ -149,18 +149,18 @@ class Api::V1::SearchesController < Api::V1::BaseController
 
   def searchComplete
     authorize Movie
-    test = []
+    result = []
     if params[:title] != "" && params[:title] != nil
-      test = searchTitle
+      result = searchTitle
     end
     if params[:date] != "" && params[:date] != nil
-      test1 = searchDate
-      if test1.length != 0
-        test = test + test1
+      date = searchDate
+      if date.length != 0
+        result = result + date
       end
     end
-   test = test.uniq
-   @movies = test
+   result = result.uniq
+   @movies = result
    render json: {data: @movies}
   end
 
