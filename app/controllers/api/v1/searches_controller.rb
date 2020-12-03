@@ -146,6 +146,24 @@ class Api::V1::SearchesController < Api::V1::BaseController
 
   skip_before_action :doorkeeper_authorize!
 
+
+  def searchComplete
+    authorize Movie
+    test = []
+    if params[:title] != "" && params[:title] != nil
+      test = searchTitle
+    end
+    if params[:date] != "" && params[:date] != nil
+      test1 = searchDate
+      if test1.length != 0
+        test = test + test1
+      end
+    end
+   test = test.uniq
+   @movies = test
+   render json: {data: @movies}
+  end
+
   def searchTitle
     authorize Movie
     title = params[:title]
@@ -156,6 +174,7 @@ class Api::V1::SearchesController < Api::V1::BaseController
     titles = title.split(",").map(&:downcase).map{|string|"%"+string+"%"}
     @movies = Movie.all.where("lower(title) ILIKE ANY (array[:title])", title: titles).page(page).per(per_page) 
     set_pagination_headers(@movies)
+    return @movies
     # if @movies.length==0 || @movies.length==nil
     #   return render json: {message: "movies not found"}
     # else
@@ -180,6 +199,7 @@ class Api::V1::SearchesController < Api::V1::BaseController
       end
       @movies = Kaminari.paginate_array(movie).page(page).per(per_page)
       set_pagination_headers(@movies)
+      return @movies
       # return render json: {data: @movie.as_json(except: [:user_id])}
     end
   end
@@ -201,12 +221,15 @@ class Api::V1::SearchesController < Api::V1::BaseController
           end
           @movies = Movie.where({created_at: dates[0].beginning_of_day..dates[1].end_of_day}).page(page).per(per_page)
           set_pagination_headers(@movies)
+          return @movies
       elsif dates[0] == ""
           @movies = Movie.where('created_at <= ?', dates[1].end_of_day).page(page).per(per_page)
           set_pagination_headers(@movies)
+          return @movies
       elsif dates[1] == ""
           @movies = Movie.where('created_at >= ?', dates[0].beginning_of_day).page(page).per(per_page)
           set_pagination_headers(@movies)
+          return @movies
       end
       authorize @movies
       # return render json: {data: @movie.as_json(except: [:user_id])}
@@ -241,5 +264,6 @@ class Api::V1::SearchesController < Api::V1::BaseController
       @watches = Watch.where('rating >= ?', rating[0])
     end
   end
+
 
 end
