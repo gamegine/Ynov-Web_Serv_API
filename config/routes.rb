@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   use_doorkeeper
   devise_for :users
-  root to: 'movies#index'
+  root to: 'token#index'
   resources :movies
   namespace :api, defaults: { format: :json } do
     namespace :v1 do
@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       get    'search/title'      => 'searches#searchTitle'
       get    'search/date'        => 'searches#searchDate'
       get    'search/rating'        => 'searches#searchRating'
+      get    'search/complete'        => 'searches#searchComplete'
     end
   end
   # swagger
