@@ -36,4 +36,8 @@ class MoviePolicy < ApplicationPolicy
     def searchDate?
       true
     end
+
+    def searchComplete?
+      true
+    end
 end

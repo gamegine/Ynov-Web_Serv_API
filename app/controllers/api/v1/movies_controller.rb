@@ -66,7 +66,6 @@ class Api::V1::MoviesController < Api::V1::BaseController
         key :description, 'ID of movie to fetch'
         key :required, true
         key :type, :integer
-        key :format, :int64
       end
       response 200 do
         key :description, 'get Movie'
@@ -94,10 +93,9 @@ class Api::V1::MoviesController < Api::V1::BaseController
         key :description, 'ID of movie to update'
         key :required, true
         key :type, :integer
-        key :format, :int64
       end
       parameter do
-        key :title, 'title'
+        key :name, :title
         key :in, :body
         key :description, 'title of Movie to update'
         key :required, true
@@ -122,7 +120,6 @@ class Api::V1::MoviesController < Api::V1::BaseController
         key :description, 'ID of movie to delete'
         key :required, true
         key :type, :integer
-        key :format, :int64
       end
       response 204 do
         key :description, ''

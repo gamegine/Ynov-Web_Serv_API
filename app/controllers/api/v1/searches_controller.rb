@@ -1,8 +1,7 @@
 class Api::V1::SearchesController < Api::V1::BaseController
   include Swagger::Blocks
 
-
-  swagger_path '/search/title={titles}' do
+  swagger_path '/search/title?title={titles}' do
     operation :get do
       key :summary, 'Find movie by titles'
       key :produces, [
@@ -30,7 +29,7 @@ class Api::V1::SearchesController < Api::V1::BaseController
     end
   end
 
-  swagger_path '/search/date={dates}' do
+  swagger_path '/search/date?date={dates}' do
     operation :get do
       key :summary, 'Find movie by dates'
       key :produces, [
@@ -59,7 +58,7 @@ class Api::V1::SearchesController < Api::V1::BaseController
     end
   end
 
-  swagger_path '/search/date=[date1,date2]' do
+  swagger_path '/search/date?date=[date1,date2]' do
     operation :get do
       key :summary, 'Find movie by dates between date1 and date2 inclusive'
       key :produces, [
@@ -87,7 +86,7 @@ class Api::V1::SearchesController < Api::V1::BaseController
     end
   end
 
-  swagger_path '/search/date=[date1,]' do
+  swagger_path '/search/date?date=[date1,]' do
     operation :get do
       key :summary, 'Find movie where dates are superiors to date1 inclusive'
       key :produces, [
@@ -115,7 +114,7 @@ class Api::V1::SearchesController < Api::V1::BaseController
     end
   end
 
-  swagger_path '/search/date=[,date1]' do
+  swagger_path '/search/date?date=[,date1]' do
     operation :get do
       key :summary, 'Find movie where dates are inferiors to date1 inclusive'
       key :produces, [
@@ -144,7 +143,176 @@ class Api::V1::SearchesController < Api::V1::BaseController
   end
 
 
+  swagger_path '/search/rating?rating={ratings}' do
+    operation :get do
+      key :summary, 'Find watch by rating(s)'
+      key :produces, [
+        'application/json',
+        'text/html',
+      ]
+      key :tags, [
+        'watch'
+      ]
+      parameter do
+        key :name, :rating
+        key :in, :path
+        key :required, true
+        key :type, :integer
+      end
+      response 200 do
+        key :description, 'get Watch'
+        schema do
+          key :type, :array
+          items do
+            key :'$ref', :Watch
+          end
+        end
+      end
+    end
+  end
+
+  swagger_path '/search/rating?rating=[rating1,rating2]' do
+    operation :get do
+      key :summary, 'Find watch by rating between rating1 and rating2 inclusive'
+      key :produces, [
+        'application/json',
+        'text/html',
+      ]
+      key :tags, [
+        'watch'
+      ]
+      parameter do
+        key :name, :rating
+        key :in, :path
+        key :required, true
+        key :type, :integer
+      end
+      response 200 do
+        key :description, 'get Watch'
+        schema do
+          key :type, :array
+          items do
+            key :'$ref', :Watch
+          end
+        end
+      end
+    end
+  end
+
+  swagger_path '/search/rating?rating=[rating1,]' do
+    operation :get do
+      key :summary, 'Find watch where rating are superiors to rating1 inclusive'
+      key :produces, [
+        'application/json',
+        'text/html',
+      ]
+      key :tags, [
+        'watch'
+      ]
+      parameter do
+        key :name, :rating
+        key :in, :path
+        key :required, true
+        key :type, :integer
+      end
+      response 200 do
+        key :description, 'get Movies'
+        schema do
+          key :type, :array
+          items do
+            key :'$ref', :Movie
+          end
+        end
+      end
+    end
+  end
+
+  swagger_path '/search/rating?rating=[,rating1]' do
+    operation :get do
+      key :summary, 'Find watch where rating are inferiors to rating1 inclusive'
+      key :produces, [
+        'application/json',
+        'text/html',
+      ]
+      key :tags, [
+        'watch'
+      ]
+      parameter do
+        key :name, :rating
+        key :in, :path
+        key :required, true
+        key :type, :integer
+      end
+      response 200 do
+        key :description, 'get watch'
+        schema do
+          key :type, :array
+          items do
+            key :'$ref', :Watch
+          end
+        end
+      end
+    end
+  end
+
+
+  swagger_path '/search/complete?rating={All-Format-Of-ratings}&dates={All-Format-Of-Dates}' do
+    operation :get do
+      key :summary, 'Find movies by rating(s) or date(s)'
+      key :produces, [
+        'application/json',
+        'text/html',
+      ]
+      key :tags, [
+        'movie'
+      ]
+      parameter do
+        key :name, :rating
+        key :in, :path
+        key :required, false
+        key :type, :array
+        key :type, :integer
+      end
+      parameter do
+        key :name, :date
+        key :in, :path
+        key :required, false
+        key :type, :array
+        key :type, :string
+        key :format, :date
+      end
+      response 200 do
+        key :description, 'get movies'
+        schema do
+          key :type, :array
+          items do
+            key :'$ref', :Movie
+          end
+        end
+      end
+    end
+  end
+
+
   skip_before_action :doorkeeper_authorize!
+
+
+  def searchComplete
+    authorize Movie
+    result = []
+    if params[:title] != "" && params[:title] != nil
+      result = searchTitle
+    end
+    if params[:date] != "" && params[:date] != nil
+      date = searchDate
+      if date.length != 0
+        result = result + date
+      end
+    end
+   result = result.uniq
+   @movies = result
+   render json: {data: @movies}
+  end
 
   def searchTitle
     authorize Movie
@@ -156,6 +324,7 @@ class Api::V1::SearchesController < Api::V1::BaseController
     titles = title.split(",").map(&:downcase).map{|string|"%"+string+"%"}
     @movies = Movie.all.where("lower(title) ILIKE ANY (array[:title])", title: titles).page(page).per(per_page) 
     set_pagination_headers(@movies)
+    return @movies
     # if @movies.length==0 || @movies.length==nil
     #   return render json: {message: "movies not found"}
     # else
@@ -180,6 +349,7 @@ class Api::V1::SearchesController < Api::V1::BaseController
       end
       @movies = Kaminari.paginate_array(movie).page(page).per(per_page)
       set_pagination_headers(@movies)
+      return @movies
       # return render json: {data: @movie.as_json(except: [:user_id])}
     end
   end
@@ -201,12 +371,15 @@ class Api::V1::SearchesController < Api::V1::BaseController
           end
           @movies = Movie.where({created_at: dates[0].beginning_of_day..dates[1].end_of_day}).page(page).per(per_page)
           set_pagination_headers(@movies)
+          return @movies
       elsif dates[0] == ""
           @movies = Movie.where('created_at <= ?', dates[1].end_of_day).page(page).per(per_page)
           set_pagination_headers(@movies)
+          return @movies
       elsif dates[1] == ""
           @movies = Movie.where('created_at >= ?', dates[0].beginning_of_day).page(page).per(per_page)
           set_pagination_headers(@movies)
+          return @movies
       end
       authorize @movies
       # return render json: {data: @movie.as_json(except: [:user_id])}
@@ -241,5 +414,6 @@ class Api::V1::SearchesController < Api::V1::BaseController
       @watches = Watch.where('rating >= ?', rating[0])
     end
   end
+
 
 end

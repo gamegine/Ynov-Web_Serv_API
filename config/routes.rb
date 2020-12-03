@@ -10,6 +10,7 @@ Rails.application.routes.draw do
       get    'search/title'      => 'searches#searchTitle'
       get    'search/date'        => 'searches#searchDate'
       get    'search/rating'        => 'searches#searchRating'
+      get    'search/complete'        => 'searches#searchComplete'
     end
   end
   # swagger
