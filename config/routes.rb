@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   use_doorkeeper
   devise_for :users
-  root to: 'movies#index'
+  root to: 'token#index'
   resources :movies
   namespace :api, defaults: { format: :json } do
     namespace :v1 do
