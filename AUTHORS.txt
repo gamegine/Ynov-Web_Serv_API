@@ -1,0 +1,7 @@
+Membre du groupe MyWatchList avec le détail de leurs responsabilités : 
+
+- FROMENTIN Victor :
+    Travail sur le token, pundit, les models, les tests, swagger et le frontend
+- DOS SANTOS Nicolas :
+    Travail sur pundit, les filtres, les tests et le Swagger
+
