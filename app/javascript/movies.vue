@@ -67,23 +67,21 @@ export default {
   },
   methods: {
     async getMovies() {
-      const res = await axios(
-        `http://localhost:3000/api/v1/movies?page=${this.page}&per_page=3`
-      );
+      const res = await axios(`/api/v1/movies?page=${this.page}&per_page=3`);
       this.json = res.data;
     },
     async createMovie(item) {
-      const url = `http://localhost:3000/api/v1/movies?access_token=${this.token}`;
+      const url = `/api/v1/movies?access_token=${this.token}`;
       const res = await axios({ method: "post", url, data: { movie: item } });
       res.status == 201 && (await this.getMovies()); // refresh local
     },
     async update(item) {
-      const url = `http://localhost:3000/api/v1/movies/${item.id}?access_token=${this.token}`;
+      const url = `/api/v1/movies/${item.id}?access_token=${this.token}`;
       const res = await axios({ method: "put", url, data: { movie: item } });
       res.status == 200 && (await this.getMovies()); // refresh local
     },
     async deleteMovie(item) {
-      const url = `http://localhost:3000/api/v1/movies/${item.id}?access_token=${this.token}`;
+      const url = `/api/v1/movies/${item.id}?access_token=${this.token}`;
       const res = await axios({ method: "delete", url });
       res.status == 204 && (await this.getMovies()); // refresh local
     },
