@@ -33,7 +33,9 @@ class ApidocsController < ActionController::Base
     SWAGGERED_CLASSES = [
         Api::V1::MoviesController,
         Api::V1::SearchesController,
+        Api::V1::WatchesController,
         Movie,
+        Watch,
         self,
     ].freeze
 
